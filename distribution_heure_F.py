@@ -16,19 +16,19 @@ df = pd.read_csv(csv_file)
 
 df = df[["FEUILLET", "RANG", "AGE", "SEXE", "P_STATUT", "HREDE" ,"MOTIF", "FACPER"]]
 
-age_range = (15, 19)
-p_statut_etude =  3
-sexe_homme = 1
+age_range = (50, 54)
+p_statut_travail =  1
+sexe_femme = 2
 
-#creer mon dataframe pour les homme, age de 15 a 19 ans, statut etudiant
-filtered_df = filter_dataframe(df, age_range, p_statut_etude, sexe_homme)
+#creer mon dataframe pour les femmes, age de 50 a 54 ans, statut travailß
+filtered_df = filter_dataframe(df, age_range, p_statut_travail, sexe_femme)
 
-#filtrer le dataframe pour garder seulement les deplacements etude
-filtered_df = filtered_df[(filtered_df["MOTIF"] == 2)]
+#filtrer le dataframe pour garder seulement les deplacements travail
+filtered_df = filtered_df[(filtered_df["MOTIF"] == 1)]
 filtered_df['NUM_PERS'] = filtered_df['FEUILLET'].astype(str) + '_' + filtered_df['RANG'].astype(str)
 
-#Calculer le nombre de fois que le deplacement etude est fait
-count_motif_per_person = filtered_df[filtered_df["MOTIF"] == 2].groupby("NUM_PERS")["MOTIF"].count()
+#Calculer le nombre de fois que le deplacement travail est fait
+count_motif_per_person = filtered_df[filtered_df["MOTIF"] == 1].groupby("NUM_PERS")["MOTIF"].count()
 #Trouver les personnes où le nombre de déplacement = 1 (deplacement le plus commun)
 selected_num_pers = count_motif_per_person[count_motif_per_person == 1].index
 
@@ -50,7 +50,6 @@ occurrences_counts = occurrences_counts.rename(columns={"FACPER": "NOMBRE_PERSON
 
 total = occurrences_counts['NOMBRE_PERSONNES'].sum()
 occurrences_counts["PERCENTAGE"] = (occurrences_counts["NOMBRE_PERSONNES"] / total) * 100
-
 occurrences_counts["HREDE_HOUR"] = occurrences_counts["HREDE_BIN"].apply(lambda x: f'{x.left}-{x.right}')
 
 plt.figure(figsize=(12, 6))
