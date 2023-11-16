@@ -30,9 +30,13 @@ legend_labels = []
 csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
 csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
+####################################################################
+## Analyse des femmes entre 50-54 ans Travailleur à temps complet ##
+####################################################################
 age_range = (50, 54)
-travailleur =  1
-femme = 2
+p_statut_travailleur =  1
+sexe_femme = 2
+
 
 csv_files = [csv_file_2003, csv_file_2013]
 
@@ -48,7 +52,7 @@ for idx, csv_file in enumerate(csv_files):
             df = df[["FEUILLET", "RANG", "AGE", "SEXE", "P_STATUT", "MOTIF", "FACPER"]]
             legend_label = "2013: F , 50-54 ans, Travailleur"
 
-    filtered_df = filter_dataframe(df, age_range, travailleur, femme)
+    filtered_df = filter_dataframe(df, age_range, p_statut_travailleur, sexe_femme)
 
     filtered_df['NUM_PERS'] = filtered_df['FEUILLET'].astype(str) + '_' + filtered_df['RANG'].astype(str)
 
