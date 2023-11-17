@@ -11,12 +11,6 @@ def filter_dataframe(df, age_range: list, p_statut: int, sexe: int):
         ]
     return filtered_df
 
-# csv_file = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
-
-# df = pd.read_csv(csv_file)
-
-# df = df[["FEUILLET", "RANG", "AGE", "SEXE", "P_STATUT", "HREDE" ,"MOTIF", "FACPER"]]
-
 fig, ax = plt.subplots(figsize=(10, 6))
 legend_labels = []
 
