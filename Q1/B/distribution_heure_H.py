@@ -18,6 +18,10 @@ legend_labels = []
 csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
 csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
+#################################################
+## Analyse des hommes entre 15-19 ans Étudiant ##
+#################################################
+
 age_range = (15, 19)
 p_statut_etude =  3
 sexe_homme = 1

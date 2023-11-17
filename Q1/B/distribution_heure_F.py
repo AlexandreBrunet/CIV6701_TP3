@@ -18,6 +18,10 @@ legend_labels = []
 csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
 csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
+####################################################################
+## Analyse des femmes entre 50-54 ans Travailleur à temps complet ##
+####################################################################
+
 age_range = (50, 54)
 p_statut_travail =  1
 sexe_femme = 2
