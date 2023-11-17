@@ -33,16 +33,20 @@ filtered_df['AGE_GROUP'] = pd.cut(filtered_df['AGE'], bins=age_bins, labels=age_
 
 occurences_counts = filtered_df.groupby(['AGE_GROUP', 'PERMIS'])['FACPER'].sum().reset_index()
 occurences_counts = occurences_counts.rename(columns={"FACPER": "NB_PERS"})
-print(occurences_counts.head(10))
 
+total_by_age_group = occurences_counts.groupby('AGE_GROUP')['NB_PERS'].sum().reset_index()
+occurences_counts = pd.merge(occurences_counts, total_by_age_group, on='AGE_GROUP', suffixes=('', '_TOTAL'))
+occurences_counts['TAUX'] = occurences_counts['NB_PERS'] / occurences_counts['NB_PERS_TOTAL']
+occurences_counts = occurences_counts.drop('NB_PERS_TOTAL', axis=1)
+print(occurences_counts.head(10))
 fig, ax = plt.subplots(figsize=(10, 6))
 
-pivot_df = occurences_counts.pivot(index='AGE_GROUP', columns='PERMIS', values='NB_PERS')
+pivot_df = occurences_counts.pivot(index='AGE_GROUP', columns='PERMIS', values='TAUX')
 pivot_df.plot(kind='bar', stacked=True, ax=ax)
 
 ax.set_title('Number of Persons by Age Group and Driving License')
 ax.set_xlabel('Age Group')
 ax.set_ylabel('Number of Persons')
-ax.legend(title='Driving License')
+ax.legend(title='Driving License', bbox_to_anchor=(1, 1), loc='upper left')
 
 plt.show()
