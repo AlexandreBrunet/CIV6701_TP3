@@ -64,12 +64,14 @@ duree_df = merged_df[select_columns]
 occurrences_counts = duree_df.groupby('DUREE_ACTIVITE')['FACPER_x'].sum().reset_index()
 occurrences_counts = occurrences_counts.rename(columns={"FACPER_x": "NOMBRE_PERSONNES"})
 
-plt.figure(figsize=(10, 6))
-plt.bar(occurrences_counts['DUREE_ACTIVITE'], occurrences_counts['NOMBRE_PERSONNES'], color='skyblue')
+occurrences_counts['DUREE_ACTIVITE_HOURS'] = occurrences_counts['DUREE_ACTIVITE'] / 60
 
-plt.xlabel('DUREE_ACTIVITE (minutes)')
+plt.figure(figsize=(10, 6))
+plt.bar(occurrences_counts['DUREE_ACTIVITE_HOURS'], occurrences_counts['NOMBRE_PERSONNES'], color='skyblue')
+
+plt.xlabel('DUREE_ACTIVITE (hours)')
 plt.ylabel('NOMBRE_PERSONNES')
-plt.title('Bar Chart: DUREE_ACTIVITE vs NOMBRE_PERSONNES')
+plt.title('Distribution duree activitee')
 
 plt.grid(axis='y')
 plt.show()
