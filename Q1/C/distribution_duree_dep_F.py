@@ -12,30 +12,26 @@ def filter_dataframe(df, age_range: list, p_statut: int, sexe: int):
     return filtered_df
 
 
-age_range = (15, 19)
-p_statut_etude =  3
-sexe_homme = 1
+age_range = (50, 54)
+p_statut_travail =  1
+sexe_femme = 2
 
 csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
 df = pd.read_csv(csv_file_2013)
 
-filtered_df = filter_dataframe(df, age_range, p_statut_etude, sexe_homme)
+filtered_df = filter_dataframe(df, age_range, p_statut_travail, sexe_femme)
 
-depart_df = filtered_df[(filtered_df["HREDE"] >= 800) & ((filtered_df["MOTIF"] == 2))]
+depart_df = filtered_df[(filtered_df["HREDE"] >= 700) & ((filtered_df["MOTIF"] == 1))]
 depart_df['NUM_PERS'] = filtered_df['FEUILLET'].astype(str) + '_' + filtered_df['RANG'].astype(str)
 
-retour_df = filtered_df[(filtered_df["HREDE"] >= 800) & ((filtered_df["MOTIF"] == 3))]
+retour_df = filtered_df[(filtered_df["HREDE"] >= 700) & ((filtered_df["MOTIF"] == 3))]
 retour_df['NUM_PERS'] = filtered_df['FEUILLET'].astype(str) + '_' + filtered_df['RANG'].astype(str)
 
 select_columns = ["NUM_PERS", "FACPER", "HREDE", "MOTIF"]
 
 depart_df = depart_df[select_columns]
-print(depart_df.head(10))
-print(depart_df.count())
 retour_df = retour_df[select_columns]
-print(retour_df.head(10))
-print(retour_df.count())
 
 
 merged_df = pd.merge(depart_df, retour_df, on="NUM_PERS", how="inner")
@@ -49,7 +45,6 @@ columns_mapping = {
 }
 
 merged_df = merged_df.rename(columns=columns_mapping)
-print(merged_df.head(10))
 
 merged_df['HEURE_DEPART'] = pd.to_datetime(merged_df['HEURE_DEPART'], format='%H%M', errors='coerce')
 merged_df['HEURE_RETOUR'] = pd.to_datetime(merged_df['HEURE_RETOUR'], format='%H%M', errors='coerce')

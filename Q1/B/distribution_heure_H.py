@@ -40,15 +40,15 @@ for idx, csv_file in enumerate(csv_files):
             df = df[["FEUILLET", "RANG", "AGE", "SEXE", "P_STATUT", "HREDE", "MOTIF", "FACPER"]]
             legend_label = "2013: H , 15-19 ans, Etudiant"
 
-    #creer mon dataframe pour les femmes, age de 50 a 54 ans, statut travailß
+    #creer mon dataframe pour les hommes, age de 15 a 19 ans, statut etudiant
     filtered_df = filter_dataframe(df, age_range, p_statut_etude, sexe_homme)
 
-    #filtrer le dataframe pour garder seulement les deplacements travail
-    filtered_df = filtered_df[(filtered_df["MOTIF"] == 1)]
+    #filtrer le dataframe pour garder seulement les deplacements ecole
+    filtered_df = filtered_df[(filtered_df["MOTIF"] == 2)]
     filtered_df['NUM_PERS'] = filtered_df['FEUILLET'].astype(str) + '_' + filtered_df['RANG'].astype(str)
 
-    #Calculer le nombre de fois que le deplacement travail est fait
-    count_motif_per_person = filtered_df[filtered_df["MOTIF"] == 1].groupby("NUM_PERS")["MOTIF"].count()
+    #Calculer le nombre de fois que le deplacement ecole est fait
+    count_motif_per_person = filtered_df[filtered_df["MOTIF"] == 2].groupby("NUM_PERS")["MOTIF"].count()
     #Trouver les personnes où le nombre de déplacement = 1 (deplacement le plus commun)
     selected_num_pers = count_motif_per_person[count_motif_per_person == 1].index
 
