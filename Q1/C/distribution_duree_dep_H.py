@@ -31,12 +31,7 @@ retour_df['NUM_PERS'] = filtered_df['FEUILLET'].astype(str) + '_' + filtered_df[
 select_columns = ["NUM_PERS", "FACPER", "HREDE", "MOTIF"]
 
 depart_df = depart_df[select_columns]
-print(depart_df.head(10))
-print(depart_df.count())
 retour_df = retour_df[select_columns]
-print(retour_df.head(10))
-print(retour_df.count())
-
 
 merged_df = pd.merge(depart_df, retour_df, on="NUM_PERS", how="inner")
 merged_df = merged_df[merged_df['HREDE_x'] < merged_df['HREDE_y']]
