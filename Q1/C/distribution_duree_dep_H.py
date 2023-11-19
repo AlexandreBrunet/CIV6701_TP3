@@ -71,11 +71,15 @@ occurrences_counts = occurrences_counts.rename(columns={"FACPER_x": "NOMBRE_PERS
 
 occurrences_counts['DUREE_ACTIVITE_HOURS'] = occurrences_counts['DUREE_ACTIVITE'] / 60
 
+total_personnes = occurrences_counts['NOMBRE_PERSONNES'].sum()
+occurrences_counts['POURCENTAGE'] = (occurrences_counts['NOMBRE_PERSONNES'] / total_personnes) * 100
+print(occurrences_counts.head(10))
+
 plt.figure(figsize=(10, 6))
-plt.bar(occurrences_counts['DUREE_ACTIVITE_HOURS'], occurrences_counts['NOMBRE_PERSONNES'], color='skyblue')
+plt.bar(occurrences_counts['DUREE_ACTIVITE_HOURS'], occurrences_counts['POURCENTAGE'], color='orange')
 
 plt.xlabel('DUREE_ACTIVITE (heures)')
-plt.ylabel('NOMBRE_PERSONNES')
+plt.ylabel('POURCENTAGE')
 plt.title('Distribution duree activitee')
 
 plt.grid(axis='y')
