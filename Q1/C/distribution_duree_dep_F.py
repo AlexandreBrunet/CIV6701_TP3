@@ -56,27 +56,30 @@ merged_df['HEURE_RETOUR'] = merged_df['HEURE_RETOUR'].dt.time
 #calcule duree de l'activite en minute
 merged_df['DUREE_ACTIVITE'] = merged_df['DUREE_ACTIVITE'].dt.total_seconds() / 60
 
+bins = range(0, int(merged_df['DUREE_ACTIVITE'].max()) + 2, 60)
+labels = [f"{i}-{i+1}" for i in bins[:-1]]
+merged_df['DUREE_ACTIVITE_BIN'] = pd.cut(merged_df['DUREE_ACTIVITE'], bins=bins, labels=labels, include_lowest=True)
 
-select_columns = ["NUM_PERS", "FACPER_x", "DUREE_ACTIVITE"]
+select_columns = ["NUM_PERS", "FACPER_x", "DUREE_ACTIVITE_BIN"]
 
 duree_df = merged_df[select_columns]
 
-occurrences_counts = duree_df.groupby('DUREE_ACTIVITE')['FACPER_x'].sum().reset_index()
+occurrences_counts = duree_df.groupby('DUREE_ACTIVITE_BIN')['FACPER_x'].sum().reset_index()
 occurrences_counts = occurrences_counts.rename(columns={"FACPER_x": "NOMBRE_PERSONNES"})
 
-occurrences_counts['DUREE_ACTIVITE_HOURS'] = occurrences_counts['DUREE_ACTIVITE'] / 60
-
+occurrences_counts['DUREE_ACTIVITE_HOURS'] = occurrences_counts['DUREE_ACTIVITE_BIN'].apply(lambda x: int(x.split('-')[0]) / 60)
 total_personnes = occurrences_counts['NOMBRE_PERSONNES'].sum()
 occurrences_counts['POURCENTAGE'] = (occurrences_counts['NOMBRE_PERSONNES'] / total_personnes) * 100
-print(occurrences_counts.head(10))
 
 plt.figure(figsize=(10, 6))
-plt.bar(occurrences_counts['DUREE_ACTIVITE_HOURS'], occurrences_counts['POURCENTAGE'], color='orange')
+plt.bar(occurrences_counts['DUREE_ACTIVITE_HOURS'], occurrences_counts['POURCENTAGE'], color='orange', width=1.0)
 
 plt.xlabel('DUREE_ACTIVITE (heures)')
 plt.ylabel('POURCENTAGE')
-plt.title('Distribution duree activitee')
+plt.title('Distribution durée activité')
+
+# Ajuster les étiquettes de l'axe x pour afficher toutes les valeurs entières
+plt.xticks(occurrences_counts['DUREE_ACTIVITE_HOURS'])
 
 plt.grid(axis='y')
 plt.show()
-
