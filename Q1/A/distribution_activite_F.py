@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from scipy.stats import ks_2samp
 import numpy as np
 from scipy.stats import chi2_contingency
 
@@ -32,6 +31,9 @@ legend_labels = []
 
 csv_file_2003 = "./data/OD03/od03_Regdomi8_6_MTLLAVAL.csv"
 csv_file_2013 = "./data/OD13/od13_Regdomi8_6_MTLLAVAL.csv"
+
+# csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
+# csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
 ####################################################################
 ## Analyse des femmes entre 50-54 ans Travailleur à temps complet ##
