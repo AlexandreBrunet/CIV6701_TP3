@@ -1,6 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from scipy.stats import ks_2samp
+import numpy as np
+from scipy.stats import chi2_contingency
 
 def filter_dataframe(df, age_range: list, p_statut: int, sexe: int):
     filtered_df = df[
@@ -26,9 +29,13 @@ columns_mapping = {
 fig, ax = plt.subplots(figsize=(10, 6))
 legend_labels = []
 
+extracted_data = pd.DataFrame()
 
-csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
-csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
+csv_file_2003 = "./data/OD03/od03_Regdomi8_6_MTLLAVAL.csv"
+csv_file_2013 = "./data/OD13/od13_Regdomi8_6_MTLLAVAL.csv"
+
+# csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
+# csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
 #################################################
 ## Analyse des hommes entre 15-19 ans Étudiant ##
@@ -46,10 +53,10 @@ for idx, csv_file in enumerate(csv_files):
         if "OD03" in csv_file:
             df = df[["feuillet", "rang", "age", "sexe", "p_statut", "motif", "facper"]]
             df.columns = df.columns.str.upper()
-            legend_label = f"2003: H , {age_range} ans, Etudiant"
+            legend_label = f"2003: H , 15-19 ans, Etudiant"
         elif "OD13" in csv_file:
             df = df[["FEUILLET", "RANG", "AGE", "SEXE", "P_STATUT", "MOTIF", "FACPER"]]
-            legend_label = f"2013: H , {age_range}, Etudiant"
+            legend_label = f"2013: H , 15-19 ans, Etudiant"
 
     filtered_df = filter_dataframe(df, age_range, p_statut_etudiant, sexe_homme)
 
@@ -66,11 +73,11 @@ for idx, csv_file in enumerate(csv_files):
     etude_df = pivot_df.loc[:, ['NUM_PERS', 'FACPER', 'Etude']]
 
     occurrences_counts = etude_df.groupby('Etude')['FACPER'].sum().reset_index()
-    occurrences_counts.columns = ['Nombre d\'occurrences du déplacement etude', 'Total pondéré']
+    occurrences_counts.columns = ['Nombre d\'occurrences du déplacement étude', 'Total pondéré']
     total_pondere_total = occurrences_counts['Total pondéré'].sum()
     occurrences_counts['Pourcentage'] = (occurrences_counts['Total pondéré'] / total_pondere_total) * 100
 
-    occurrences_counts = occurrences_counts.sort_values('Nombre d\'occurrences du déplacement etude')
+    occurrences_counts = occurrences_counts.sort_values('Nombre d\'occurrences du déplacement étude')
 
     total_count = occurrences_counts['Total pondéré'].sum()
     total_percentage = occurrences_counts['Pourcentage'].sum()
@@ -85,17 +92,50 @@ for idx, csv_file in enumerate(csv_files):
 
     legend_labels.append(legend_label)
 
+    extracted_data = pd.concat([extracted_data, occurrences_counts.add_suffix(f'_{csv_file[-8:-4]}')], axis=1)
+
 
 ax.set_xticks([i + width for i in range(len(occurrences_counts))])
-ax.set_xticklabels(occurrences_counts['Nombre d\'occurrences du déplacement etude'])
+ax.set_xticklabels(occurrences_counts['Nombre d\'occurrences du déplacement étude'])
 
 ax.legend(legend_labels)
 
-ax.set_xlabel('Nombre d\'occurrences du déplacement etude')
+ax.set_xlabel('Nombre d\'occurrences du déplacement étude')
 ax.set_ylabel('Pourcentage')
-ax.set_title('Distribution en pourcentage du nombre de déplacement etude')
+ax.set_title('Distribution en pourcentage du nombre de déplacement: Étude')
 
 plt.show()
+
+print(extracted_data)
+
+extracted_data.columns = [
+    'Nombre_occurrences_2003', 'Total_pondere_2003', 'Pourcentage_2003',
+    'Nombre_occurrences_2013', 'Total_pondere_2013', 'Pourcentage_2013'
+]
+
+print(extracted_data)
+
+columns_to_drop = ['Nombre_occurrences_2003', 'Nombre_occurrences_2013']
+extracted_data = extracted_data.drop(columns=columns_to_drop)
+print(extracted_data)
+
+columns_2003 = ['Pourcentage_2003']
+columns_2013 = ['Pourcentage_2013']
+
+observed = pd.concat([extracted_data[columns_2003].fillna(0), extracted_data[columns_2013].fillna(0)], axis=1)
+print(observed)
+chi2, p_value, _, _ = chi2_contingency(observed)
+print(f"Statistique du test du Chi-squared : {chi2}")
+print(f"p-valeur : {p_value}")
+
+hypothese_null = "Il n'y a pas suffisamment de preuves pour rejeter l'hypothèse nulle. Les distributions sont similaires."
+hypothese_alternative = "La différence entre les distributions est statistiquement significative. Rejetez l'hypothèse nulle."
+alpha = 0.05 # 5%
+
+if p_value < alpha:
+    print(hypothese_alternative)
+else:
+    print(hypothese_null)
     
 
 

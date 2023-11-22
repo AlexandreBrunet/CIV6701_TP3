@@ -1,6 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from scipy.stats import ks_2samp
+import numpy as np
+from scipy.stats import chi2_contingency
 
 def filter_dataframe(df, age_range: list, p_statut: int, sexe: int):
     filtered_df = df[
@@ -27,8 +30,8 @@ fig, ax = plt.subplots(figsize=(10, 6))
 legend_labels = []
 
 
-csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
-csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
+csv_file_2003 = "./data/OD03/od03_Regdomi8_6_MTLLAVAL.csv"
+csv_file_2013 = "./data/OD13/od13_Regdomi8_6_MTLLAVAL.csv"
 
 ####################################################################
 ## Analyse des femmes entre 50-54 ans Travailleur à temps complet ##
@@ -37,6 +40,7 @@ age_range = (50, 54)
 p_statut_travailleur =  1
 sexe_femme = 2
 
+extracted_data = pd.DataFrame()
 
 csv_files = [csv_file_2003, csv_file_2013]
 
@@ -85,6 +89,8 @@ for idx, csv_file in enumerate(csv_files):
 
     legend_labels.append(legend_label)
 
+    extracted_data = pd.concat([extracted_data, occurrences_counts.add_suffix(f'_{csv_file[-8:-4]}')], axis=1)
+
 
 ax.set_xticks([i + width for i in range(len(occurrences_counts))])
 ax.set_xticklabels(occurrences_counts['Nombre d\'occurrences du déplacement travail'])
@@ -93,9 +99,35 @@ ax.legend(legend_labels)
 
 ax.set_xlabel('Nombre d\'occurrences du déplacement travail')
 ax.set_ylabel('Pourcentage')
-ax.set_title('Distribution en pourcentage du nombre de déplacement Travail')
+ax.set_title('Distribution en pourcentage du nombre de déplacements: Travail')
 
 plt.show()
-    
 
 
+extracted_data.columns = [
+    'Nombre_occurrences_2003', 'Total_pondere_2003', 'Pourcentage_2003',
+    'Nombre_occurrences_2013', 'Total_pondere_2013', 'Pourcentage_2013'
+]
+
+
+columns_to_drop = ['Nombre_occurrences_2003', 'Nombre_occurrences_2013']
+extracted_data = extracted_data.drop(columns=columns_to_drop)
+
+columns_2003 = ['Pourcentage_2003']
+columns_2013 = ['Pourcentage_2013']
+
+observed = pd.concat([extracted_data[columns_2003].fillna(0), extracted_data[columns_2013].fillna(0)], axis=1)
+
+print(observed)
+chi2, p_value, _, _ = chi2_contingency(observed)
+print(f"Statistique du test du Chi-squared : {chi2}")
+print(f"p-valeur : {p_value}")
+
+hypothese_null = "Il n'y a pas suffisamment de preuves pour rejeter l'hypothèse nulle. Les distributions sont similaires."
+hypothese_alternative = "La différence entre les distributions est statistiquement significative. Rejetez l'hypothèse nulle."
+alpha = 0.05 # 5%
+
+if p_value < alpha:
+    print(hypothese_alternative)
+else:
+    print(hypothese_null)

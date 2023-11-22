@@ -14,9 +14,12 @@ def filter_dataframe(df, age_range: list, p_statut: int, sexe: int):
 fig, ax = plt.subplots(figsize=(10, 6))
 legend_labels = []
 
+csv_file_2003 = "./data/OD03/od03_Regdomi8_6_MTLLAVAL.csv"
+csv_file_2013 = "./data/OD13/od13_Regdomi8_6_MTLLAVAL.csv"
 
-csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
-csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
+
+# csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
+# csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
 ####################################################################
 ## Analyse des femmes entre 50-54 ans Travailleur à temps complet ##
@@ -70,7 +73,7 @@ for idx, csv_file in enumerate(csv_files):
 
     total = occurrences_counts['NOMBRE_PERSONNES'].sum()
     occurrences_counts["PERCENTAGE"] = (occurrences_counts["NOMBRE_PERSONNES"] / total) * 100
-    occurrences_counts["HREDE_HOUR"] = occurrences_counts["HREDE_BIN"].apply(lambda x: f'{x.left}-{x.right}')
+    occurrences_counts["HEURE_DÉPART"] = occurrences_counts["HREDE_BIN"].apply(lambda x: f'{x.left}-{x.right}')
 
     width = 0.4
     x = [i + width * idx for i in range(len(occurrences_counts))]
@@ -84,11 +87,11 @@ for idx, csv_file in enumerate(csv_files):
 
 
 ax.set_xticks([i + width for i in range(len(occurrences_counts))])
-ax.set_xticklabels(occurrences_counts['HREDE_HOUR'], rotation='vertical')
+ax.set_xticklabels(occurrences_counts['HEURE_DÉPART'], rotation='vertical')
 
 ax.legend(legend_labels)
 
-ax.set_xlabel('HREDE_HOUR')
+ax.set_xlabel('HEURE_DÉPART')
 ax.set_ylabel('Pourcentage')
 ax.set_title("Heure de départ pour l'activité étude")
 

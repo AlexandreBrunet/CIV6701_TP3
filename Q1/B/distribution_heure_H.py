@@ -14,9 +14,11 @@ def filter_dataframe(df, age_range: list, p_statut: int, sexe: int):
 fig, ax = plt.subplots(figsize=(10, 6))
 legend_labels = []
 
+csv_file_2003 = "./data/OD03/od03_Regdomi8_6_MTLLAVAL.csv"
+csv_file_2013 = "./data/OD13/od13_Regdomi8_6_MTLLAVAL.csv"
 
-csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
-csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
+# csv_file_2003 = "./data/OD03/od03_Regdomi8_7_CNORD.csv"
+# csv_file_2013 = "./data/OD13/od13_Regdomi8_7_CNORD.csv"
 
 #################################################
 ## Analyse des hommes entre 15-19 ans Étudiant ##
@@ -88,7 +90,7 @@ ax.set_xticklabels(occurrences_counts['HREDE_HOUR'], rotation='vertical')
 
 ax.legend(legend_labels)
 
-ax.set_xlabel('HREDE_HOUR')
+ax.set_xlabel('HEURE DÉPART')
 ax.set_ylabel('Pourcentage')
 ax.set_title("Heure de départ pour l'activité étude")
 
